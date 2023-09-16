@@ -1,5 +1,5 @@
 """
-This file shows example of CTLE modelling, and generates the impulse response of the channel and CTLE 
+This file shows example of CTLE modelling, and generates the impulse response of the channel and CTLE
 
 Requires running 1_channel.py first
 """
@@ -32,7 +32,7 @@ k = p**2/z
 w, H_ctle = sp.signal.freqs([k/p**2, k*z/p**2], [1/p**2, 2/p, 1], w)
 
 #bode plot of CTLE transfer function
-plt.figure(dpi=600)
+plt.figure(dpi=200)
 plt.semilogx(1e-9*f,20*np.log10(abs(H_ctle)), color = "red", label = 'CTLE')
 plt.title("CTLE Frequency Response")
 plt.grid()
@@ -45,7 +45,7 @@ plt.legend()
 #%% compute and save impulse response of CTLE transfer function
 h_ctle, t_ctle = sdp.freq2impulse(H_ctle,f)
 h_ctle = h_ctle[0:200]
-plt.figure(dpi=600)
+plt.figure(dpi=200)
 plt.plot(h_ctle)
 
 np.save("./data/h_ctle.npy", h_ctle)
@@ -68,3 +68,5 @@ sdp.simple_eye(signal_out[1000:], samples_per_symbol*3, 1000, TX.UI/TX.samples_p
 signal_out_ctle = sp.signal.fftconvolve(signal_out, h_ctle, mode = "same")
 
 sdp.simple_eye(signal_out_ctle[1000:], samples_per_symbol*3, 1000, TX.UI/TX.samples_per_symbol, "Eye Diagram with CTLE")
+
+plt.show()

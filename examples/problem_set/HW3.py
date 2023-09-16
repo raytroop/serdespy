@@ -70,7 +70,7 @@ C= C0 * (1j*w/w_0)**(-2*theta_0/np.pi)
 
 if (f[0]==0):
    C[0] = C[1]
-   
+
 # transmission line length [m]
 d = 0.1
 
@@ -122,7 +122,7 @@ np.save("./data/hpulse.npy",hpulse)
 
 #%% Plots
 
-plt.figure(dpi=600)
+plt.figure(dpi=200)
 plt.title('Transmission Line Frequency Response')
 plt.semilogx(1e-9*f,20*np.log10(np.abs(Hchannel)))
 plt.xlim([0.1, 100])
@@ -134,7 +134,7 @@ plt.grid()
 plt.axvline(x=25,color = 'grey', label = "Nyquist Frequency")
 plt.show()
 
-plt.figure(dpi=600)
+plt.figure(dpi=200)
 plt.plot((t*1e9),h)
 plt.title('Transmission Line Impulse Response')
 plt.ylabel('Impulse Response')
@@ -143,7 +143,7 @@ plt.xlim([0, 5])
 #plt.ylim([-0.01, 0.08])
 plt.show()
 
-plt.figure(dpi=600)
+plt.figure(dpi=200)
 plt.plot((t*1e9),hpulse)
 plt.title('Transmission Line Pulse Response')
 plt.ylabel('Pulse Response')
@@ -152,7 +152,7 @@ plt.xlim([0, 5])
 #plt.ylim([-0.01, 0.08])
 plt.show()
 
-plt.figure(dpi=600)
+plt.figure(dpi=200)
 plt.plot(t*1e9,hstep)
 plt.title('Transmission Line Step Response')
 plt.ylabel('Step Response [V]')
@@ -177,8 +177,8 @@ signal_ideal = np.repeat(signal_BR, samples_per_symbol)
 #eye diagram of ideal signal
 
 signal_out = sp.signal.convolve(h,signal_ideal)
-                                
-sdp.simple_eye(signal_out[100*samples_per_symbol:], samples_per_symbol*3, 500, t_sample, "{}Gbps 4-PAM Signal".format(data_rate/1e9))
+
+sdp.simple_eye(signal_out[100*samples_per_symbol:], samples_per_symbol*3, 500, t_sample, "{}Gbps 4-PAM Signal".format(data_rate/1e9), res=200)
 
 #%% Add parallel shunt capacitance to source and termination
 
@@ -223,7 +223,7 @@ np.save("./data/hpulse_cap.npy",hpulse)
 
 #%% Plots
 
-plt.figure(dpi=600)
+plt.figure(dpi=200)
 plt.title('Transmission Line (with cap) Frequency Response Magnitude')
 plt.semilogx(1e-9*f,20*np.log10(np.abs(Hchannel)))
 plt.xlim([0.1, 100])
@@ -236,7 +236,7 @@ plt.axvline(x=25,color = 'grey', label = "Nyquist Frequency")
 plt.show()
 
 
-plt.figure(dpi=600)
+plt.figure(dpi=200)
 plt.plot((t*1e9),h)
 plt.title('Transmission Line (with cap) Impulse Response')
 plt.ylabel('Impulse Response')
@@ -245,7 +245,7 @@ plt.xlim([0, 5])
 #plt.ylim([-0.01, 0.08])
 plt.show()
 
-plt.figure(dpi=600)
+plt.figure(dpi=200)
 plt.plot((t*1e9),hpulse)
 plt.title('Transmission Line (with cap) Pulse Response')
 plt.ylabel('Pulse Response')
@@ -254,7 +254,7 @@ plt.xlim([0, 5])
 #plt.ylim([-0.01, 0.08])
 plt.show()
 
-plt.figure(dpi=600)
+plt.figure(dpi=200)
 plt.plot(t*1e9,hstep)
 plt.title('Transmission Line (with cap) Step Response')
 plt.ylabel('Step Response [V]')
@@ -267,8 +267,8 @@ plt.show()
 #eye diagram of ideal signal
 
 signal_out_cap = sp.signal.convolve(h,signal_ideal)
-                                
-sdp.simple_eye(signal_out_cap[100*samples_per_symbol:], samples_per_symbol*3, 500, t_sample, "{}Gbps 4-PAM Signal".format(data_rate/1e9))
+
+sdp.simple_eye(signal_out_cap[100*samples_per_symbol:], samples_per_symbol*3, 500, t_sample, "{}Gbps 4-PAM Signal".format(data_rate/1e9), res=200)
 
 #%% save data for next homework assignment
 np.save("./data/signal.npy",signal_out)

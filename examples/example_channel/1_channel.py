@@ -15,7 +15,7 @@ import skrf as rf
 import scipy as sp
 
 #load in touchstone file containing s-params of 2m copper cable connector
-thru_file = "./Tp0_Tp5_28p5db_FQSFP_thru.s4p"
+thru_file = "./examples/mellitz_3ck_04_1119_CACR/Tp0_Tp5_28p5db_FQSFP_thru.s4p"
 thru_network = rf.Network(thru_file)
 
 #port definition, is defined in the header of the touchstone file
@@ -41,7 +41,7 @@ Zl = 50
 H_thru, f, h_thru, t = sdp.four_port_to_diff(thru_network, port_def, Zs, Zl, option = 1, t_d = t_d)
 
 #Plot transfer function of Channel
-plt.figure(dpi = 1200)
+plt.figure(dpi = 200)
 plt.plot(1e-9*f,20*np.log10(abs(H_thru)), color = "blue", label = "THRU channel", linewidth = 0.8)
 plt.ylabel('Mag. Response [dB]')
 plt.xlabel('Frequency [GHz]')
@@ -52,12 +52,13 @@ plt.legend()
 
 #visualize pulse response
 pulse_response = sp.signal.fftconvolve(h_thru, np.ones(samples_per_symbol), mode = "same")
-sdp.channel_coefficients(pulse_response, t, samples_per_symbol, 3, 20)
+sdp.channel_coefficients(pulse_response, t, samples_per_symbol, 3, 20, 200)
 
 #crop impulse response and save
-plt.figure(dpi = 1200)
+plt.figure(dpi = 200)
 h_thru_crop = h_thru[44500:47500]
 plt.plot(h_thru_crop)
+plt.show()
 
 #save pulse response, transfer function, and frequency vector, used in other example files
 

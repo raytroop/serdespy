@@ -19,15 +19,15 @@ nyquist_f = 26.56e9
 pulse_response = sp.signal.fftconvolve(h, np.ones(samples_per_symbol), mode = "full")
 
 #plot channel coefficients for pulse response
-sdp.channel_coefficients(pulse_response, np.linspace(1,pulse_response.size,pulse_response.size), samples_per_symbol, 3, 20, title = "Pulse Response")
+sdp.channel_coefficients(pulse_response, np.linspace(1,pulse_response.size,pulse_response.size), samples_per_symbol, 3, 20, res=200, title = "Pulse Response")
 
 #pulse response with CTLE
 pulse_response_ctle = sp.signal.fftconvolve(pulse_response, h_ctle, mode = "full")
 
 #plot channel coefficients. observer lower post-cursor ISI
-sdp.channel_coefficients(pulse_response_ctle, np.linspace(1,pulse_response_ctle.size,pulse_response_ctle.size), samples_per_symbol, 3, 20, title = "Pulse Response with CTLE")
+sdp.channel_coefficients(pulse_response_ctle, np.linspace(1,pulse_response_ctle.size,pulse_response_ctle.size), samples_per_symbol, 3, 20, res=200, title = "Pulse Response with CTLE")
 
-#%% pick 1 tap TX FIR FILTER 
+#%% pick 1 tap TX FIR FILTER
 
 #arbitrarily take -0.05 tap weight to reduce precursor ISI
 tx_fir_tap_weights = np.array([-0.05, 1])
@@ -39,7 +39,7 @@ pulse_response_fir = sp.signal.fftconvolve(h, np.repeat(tx_fir_tap_weights,sampl
 pulse_response_fir_ctle = sp.signal.fftconvolve(pulse_response_fir, h_ctle, mode = "full")
 
 #plot channel coefficients
-channel_coefficients = sdp.channel_coefficients(pulse_response_fir_ctle, np.linspace(1,pulse_response_fir_ctle.size,pulse_response_fir_ctle.size), samples_per_symbol, 3, 20, title = "Pulse Response with FIR and CTLE")[:4]
+channel_coefficients = sdp.channel_coefficients(pulse_response_fir_ctle, np.linspace(1,pulse_response_fir_ctle.size,pulse_response_fir_ctle.size), samples_per_symbol, 3, 20, title = "Pulse Response with FIR and CTLE", res=200)[:4]
 
 
 #%% Pick 3 precursor tap FFE
@@ -59,7 +59,7 @@ for i in range(ffe_tap_weights.size):
 pulse_response_fir_ctle_ffe = sp.signal.fftconvolve(pulse_response_fir_ctle, rx_ffe_conv, mode = "full")
 
 #plot channel coefficients. observe lower pre-cursor ISI
-channel_coefficients = sdp.channel_coefficients(pulse_response_fir_ctle_ffe, np.linspace(1,pulse_response_fir_ctle_ffe.size,pulse_response_fir_ctle_ffe.size), samples_per_symbol, 3, 20)
+channel_coefficients = sdp.channel_coefficients(pulse_response_fir_ctle_ffe, np.linspace(1,pulse_response_fir_ctle_ffe.size,pulse_response_fir_ctle_ffe.size), samples_per_symbol, 3, 20, res=200)
 
 #amplitude of main cursor
 main_cursor = channel_coefficients[3]
@@ -82,7 +82,7 @@ TX.FIR(tx_fir_tap_weights)
 TX.oversample(samples_per_symbol)
 
 #eye diagram of transmitter waveform
-sdp.simple_eye(TX.signal_ideal[64*3:], samples_per_symbol*3, 500, TX.UI/TX.samples_per_symbol, "TX Ideal Eye Diagram with FIR filter")
+sdp.simple_eye(TX.signal_ideal[64*3:], samples_per_symbol*3, 500, TX.UI/TX.samples_per_symbol, "TX Ideal Eye Diagram with FIR filter", res=200)
 
 #signal at output of channel
 signal_out = sp.signal.fftconvolve(TX.signal_ideal, h, mode = "same")[:64*500*12]
@@ -91,7 +91,7 @@ signal_out = sp.signal.fftconvolve(TX.signal_ideal, h, mode = "same")[:64*500*12
 signal_out_ctle = sp.signal.fftconvolve(signal_out, h_ctle, mode = "same")
 
 #plot eye diagram
-sdp.simple_eye(signal_out_ctle, samples_per_symbol*3, 1000, TX.UI/TX.samples_per_symbol, "Eye Diagram with CTLE")
+sdp.simple_eye(signal_out_ctle, samples_per_symbol*3, 1000, TX.UI/TX.samples_per_symbol, "Eye Diagram with CTLE", res=200)
 
 #%%
 RX = sdp.Receiver(signal_out_ctle, samples_per_symbol, nyquist_f, voltage_levels, shift = True, main_cursor = main_cursor)
@@ -106,9 +106,11 @@ RX.FFE(ffe_tap_weights, n_taps_pre)
 RX.pam4_DFE(dfe_tap_weights)
 
 #plot eye diagram
-sdp.simple_eye(RX.signal[64*300:], samples_per_symbol*3, 1000, TX.UI/TX.samples_per_symbol, f"Eye Diagram with CTLE, FFE, and DFE")
+sdp.simple_eye(RX.signal[64*300:], samples_per_symbol*3, 1000, TX.UI/TX.samples_per_symbol, f"Eye Diagram with CTLE, FFE, and DFE", res=200)
 
 #%%save the tap weights chosen
 np.save("./data/rx_ffe_tap_weights.npy",ffe_tap_weights)
 np.save("./data/rx_dfe_tap_weights.npy",dfe_tap_weights)
 np.save("./data/tx_fir_tap_weights.npy",tx_fir_tap_weights)
+
+plt.show()

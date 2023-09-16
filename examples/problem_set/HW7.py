@@ -6,14 +6,14 @@ import matplotlib.pyplot as plt
 
 #generate binary data
 data = sdp.prqs10(1)[:10000]
-     
+
 #generate Baud-Rate sampled signal from data
 voltage_levels=np.array([-1,-1/3,1/3,1])
 #voltage_levels=np.array([-3/2,-1/2,1/2,3/2])
 #voltage_levels=np.array([-2,-2/3,2/3,2])
 
 signal_BR = sdp.pam4_input_BR(data,voltage_levels=voltage_levels)
-    
+
 #data rate in Gbps
 data_rate = 100e9
 
@@ -30,11 +30,11 @@ dt = UI/samples_per_symbol
 signal_ideal = np.repeat(signal_BR, samples_per_symbol)
 
 #eye diagram of ideal signal
-sdp.simple_eye(signal_ideal, samples_per_symbol*3, 100, dt, "{}Gbps 4-PAM Signal".format(data_rate/1e9),linewidth=1.5)
+sdp.simple_eye(signal_ideal, samples_per_symbol*3, 100, dt, "{}Gbps 4-PAM Signal".format(data_rate/1e9),linewidth=1.5, res=200)
 
 #cutoff frequency
 freq_bw = 50e9
-       
+
 #max frequency for constructing discrete transfer function
 max_f = 1/dt
 
@@ -51,7 +51,7 @@ w, H = sp.signal.freqs([freq_bw*(2*np.pi)], [1,freq_bw*(2*np.pi)], np.linspace(0
 f = w/(2*np.pi)
 
 #plot frequency response of TF
-plt.figure(dpi=800)
+plt.figure(dpi=200)
 plt.semilogx(1e-9*f,20*np.log10(abs(H)))
 plt.ylabel('Mag. Response [dB]')
 plt.xlabel('Frequency [GHz]')
@@ -67,7 +67,7 @@ h, t = sdp.freq2impulse(H,f)
 signal_filtered = sp.signal.fftconvolve(signal_ideal, h[:ir_length])
 
 #plot eye diagram of filtered signal
-sdp.simple_eye(signal_filtered[samples_per_symbol*100:], samples_per_symbol*3, 100, UI/samples_per_symbol, "{}Gbps 4-PAM Signal with {}GHz Cutoff Filter".format(round(data_rate/1e9),round(freq_bw*1e-9)))
+sdp.simple_eye(signal_filtered[samples_per_symbol*100:], samples_per_symbol*3, 100, UI/samples_per_symbol, "{}Gbps 4-PAM Signal with {}GHz Cutoff Filter".format(round(data_rate/1e9),round(freq_bw*1e-9)), res=200)
 
 #optical modulator nonlinearity
 def optical_nonlinearity(signal):
@@ -76,7 +76,7 @@ def optical_nonlinearity(signal):
 signal_optical = optical_nonlinearity(signal_filtered)
 
 #eye diagram of optical signal
-sdp.simple_eye(signal_optical[samples_per_symbol*100:], samples_per_symbol*3, 100, UI/samples_per_symbol, "{}Gbps Optical 4-PAM Signal".format(round(data_rate/1e9),round(freq_bw*1e-9)))
+sdp.simple_eye(signal_optical[samples_per_symbol*100:], samples_per_symbol*3, 100, UI/samples_per_symbol, "{}Gbps Optical 4-PAM Signal".format(round(data_rate/1e9),round(freq_bw*1e-9)), res=200)
 
 #calculate RLM
 levels_optical = optical_nonlinearity(voltage_levels)
@@ -90,3 +90,5 @@ ES2 = (levels_optical[2]-Vmin)/(levels_optical[3]-Vmin)
 RLM = min((3*ES1),(3*ES2),(2-3*ES1),(2-3*ES2))
 
 print("RLM = ",RLM)
+
+plt.show()

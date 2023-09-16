@@ -26,7 +26,7 @@ k = p**2/z
 w, H_ctle = sp.signal.freqs([k/p**2, k*z/p**2], [1/p**2, 2/p, 1], w)
 
 #bode plot of CTLE transfer function
-plt.figure(dpi=600)
+plt.figure(dpi=200)
 plt.semilogx(1e-9*f,20*np.log10(abs(H_ctle)), color = "red", label = 'CTLE')
 plt.title("CTLE Frequency Response")
 plt.grid()
@@ -38,16 +38,16 @@ plt.legend()
 #%%
 h_ctle, t_ctle = sdp.freq2impulse(H_ctle,f)
 h_ctle = h_ctle[0:200]
-plt.figure(dpi=600)
+plt.figure(dpi=200)
 plt.plot(h_ctle)
 
 #%% Eye diagram of signal with and without CTLE
 
-sdp.simple_eye(signal[100*samples_per_symbol:], samples_per_symbol*3, 500, 500*1e-15, "{}Gbps 4-PAM Signal".format(data_rate/1e9))
+sdp.simple_eye(signal[100*samples_per_symbol:], samples_per_symbol*3, 500, 500*1e-15, "{}Gbps 4-PAM Signal".format(data_rate/1e9), res=200)
 
 signal_ctle = sp.signal.convolve(signal,h_ctle)
 
-sdp.simple_eye(signal_ctle[100*samples_per_symbol:], samples_per_symbol*3, 500, 500*1e-15, "{}Gbps 4-PAM Signal with CTLE".format(data_rate/1e9))
+sdp.simple_eye(signal_ctle[100*samples_per_symbol:], samples_per_symbol*3, 500, 500*1e-15, "{}Gbps 4-PAM Signal with CTLE".format(data_rate/1e9), res=200)
 
 #%%
 h_pulse_ctle = sp.signal.convolve(h_pulse,h_ctle)
@@ -57,9 +57,9 @@ FFE_taps = 7
 FFE_post = FFE_taps - FFE_pre - 1
 DFE_taps = 2
 
-sdp.channel_coefficients(h_pulse[:t.size],t,40,2,4)
+sdp.channel_coefficients(h_pulse[:t.size],t,40,2,4, res=200)
 
-h = sdp.channel_coefficients(h_pulse_ctle[:t.size],t,40,2,4)
+h = sdp.channel_coefficients(h_pulse_ctle[:t.size],t,40,2,4, res=200)
 #%%
 #h /= h.max()
 #print('h: ',h)
@@ -97,12 +97,14 @@ nyquist_f = 25e9
 
 RX = sdp.Receiver(signal_ctle, samples_per_symbol, nyquist_f, voltage_levels,main_cursor=main_cursor)
 
-#sdp.simple_eye(RX.signal, samples_per_symbol*3, 800, TX.UI/TX.samples_per_symbol, "Eye Diagram with CTLE")
+#sdp.simple_eye(RX.signal, samples_per_symbol*3, 800, TX.UI/TX.samples_per_symbol, "Eye Diagram with CTLE", res=200)
 
 RX.FFE(w_ffe, FFE_pre)
 
-sdp.simple_eye(RX.signal[int(100.5*samples_per_symbol):], samples_per_symbol*3, 800, 500*1e-15, "Eye Diagram with CTLE and FFE")
+sdp.simple_eye(RX.signal[int(100.5*samples_per_symbol):], samples_per_symbol*3, 800, 500*1e-15, "Eye Diagram with CTLE and FFE", res=200)
 
 RX.pam4_DFE(w_dfe)
 
-sdp.simple_eye(RX.signal[int(100.5*samples_per_symbol):], samples_per_symbol*3, 800, 500*1e-15, "Eye Diagram with CTLE, FFE, and DFE")
+sdp.simple_eye(RX.signal[int(100.5*samples_per_symbol):], samples_per_symbol*3, 800, 500*1e-15, "Eye Diagram with CTLE, FFE, and DFE", res=200)
+
+plt.show()

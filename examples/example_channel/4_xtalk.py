@@ -15,7 +15,7 @@ import skrf as rf
 import scipy as sp
 
 #path to touchstone files here:
-s4p_dir = "C:/Users/richa/Downloads/mellitz_3ck_04_1119_CACR/"
+s4p_dir = "./examples/mellitz_3ck_04_1119_CACR/"
 
 #far-end crosstalk
 fext_files = ['Tp0_Tp5_28p5db_FQSFP_fext' + f'{i}' +'.s4p' for i in range(1,8)]
@@ -54,7 +54,7 @@ for i in range(len(next_files)):
 #%%% Plot magnitude response of crosstalk and thru channel
 import matplotlib.patches as mpatches
 
-plt.figure(dpi = 1200)
+plt.figure(dpi = 200)
 
 next_patch = mpatches.Patch(color='red', label='FEXT')
 fext_patch = mpatches.Patch(color='orange', label='NEXT')
@@ -63,10 +63,10 @@ nyquist_patch = mpatches.Patch(color='grey', label='Nyquist Frequency')
 
 for i in range(len(fext_files)):
     plt.plot(1e-9*f,20*np.log10(abs(H_fext[i,:])), color = "red", linewidth = 0.2)
-    
+
 for i in range(len(next_files)):
     plt.plot(1e-9*f,20*np.log10(abs(H_next[i,:])), color = "orange", linewidth = 0.2)
-    
+
 H_thru = np.load("./data/TF_thru.npy")
 plt.plot(1e-9*f,20*np.log10(abs(H_thru)), color = "blue", label = "THRU channel", linewidth = 0.8)
 
@@ -96,19 +96,19 @@ xt_response = np.zeros([data.size*samples_per_symbol,])
 
 for i in range(h_xtalk.shape[0]):
     print(i)
-    
+
     #generate data for each xtalk channel with new random seed
     data = sdp.prqs10(int(i+1))
-    
+
     #find xtalk response and sum
     TX = sdp.Transmitter(data, voltage_levels, 26.56e9)
     TX.oversample(samples_per_symbol)
     xt_response = xt_response + sp.signal.fftconvolve(TX.signal_ideal, h_xtalk[i][:], mode = "same")
 
 #plot eye diagram of sum of all crosstalk
-sdp.simple_eye(xt_response, samples_per_symbol*3, 500, TX.UI/TX.samples_per_symbol, "XT")
+sdp.simple_eye(xt_response, samples_per_symbol*3, 500, TX.UI/TX.samples_per_symbol, "XT", res=200)
 
 #save data
 np.save("./data/xt_response.npy",xt_response)
 
-
+plt.show()

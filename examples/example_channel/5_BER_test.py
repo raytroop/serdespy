@@ -42,7 +42,7 @@ TX.gaussian_jitter(stdev_div_UI=0.025)
 TX.tx_bandwidth(freq_bw=120e9)
 
 #plot eye diagram of bandwidth-limitied transmitter waveform
-sdp.simple_eye(TX.signal, samples_per_symbol*3, 1000, TX.UI/TX.samples_per_symbol, "TX Bandwidth-Limited Eye Diagram (-3dB frequency at 100GHz)")
+sdp.simple_eye(TX.signal, samples_per_symbol*3, 1000, TX.UI/TX.samples_per_symbol, "TX Bandwidth-Limited Eye Diagram (-3dB frequency at 100GHz)", res=200)
 #%% signal after channel
 signal_out = sp.signal.fftconvolve(TX.signal, h, mode = "same")
 
@@ -52,7 +52,7 @@ signal_out = sp.signal.fftconvolve(TX.signal, h, mode = "same")
 
 signal_out_ctle = sp.signal.fftconvolve(signal_out, h_ctle, mode = "same")
 #%%plot eye diagram with ctle
-sdp.simple_eye(signal_out_ctle, samples_per_symbol*3, 1000, TX.UI/TX.samples_per_symbol, "Eye Diagram with CTLE")
+sdp.simple_eye(signal_out_ctle, samples_per_symbol*3, 1000, TX.UI/TX.samples_per_symbol, "Eye Diagram with CTLE", res=200)
 
 main_cursor = np.max(signal_out_ctle)/np.max(voltage_levels)
 
@@ -65,18 +65,18 @@ RX.slice_signal()
 RX.signal_BR =  RX.signal_BR + np.random.normal(scale=0.05, size = RX.signal_BR.size)
 
 #plot baud-rate eye diagram with ctle and noise
-sdp.simple_eye(RX.signal_BR, 3, 1000, TX.UI, "Eye Diagram with CTLE and noise BR")
+sdp.simple_eye(RX.signal_BR, 3, 1000, TX.UI, "Eye Diagram with CTLE and noise BR", res=200)
 
 #apply feed-forward equalization to baud-rate-sampled signal
 RX.FFE_BR(ffe_tap_weights, 3)
 
 #sdp.simple_eye(RX.signal_BR, 3, 800, TX.UI/TX.samples_per_symbol, "Eye Diagram after FFE")
 
-# apply decision-feedback equalization 
+# apply decision-feedback equalization
 RX.pam4_DFE_BR(dfe_tap_weights)
 
 #plot baud-rate eye diagram after DFE
-sdp.simple_eye(RX.signal_BR, 3, 800, TX.UI/TX.samples_per_symbol, "Eye Diagram after DFE")
+sdp.simple_eye(RX.signal_BR, 3, 800, TX.UI/TX.samples_per_symbol, "Eye Diagram after DFE", res=200)
 
 #%%check the number of errors and calculate BER
 err = sdp.prqs_checker(10, data, RX.symbols_out[10:-10])
@@ -84,3 +84,5 @@ err = sdp.prqs_checker(10, data, RX.symbols_out[10:-10])
 print("Bits Transmitted =", RX.symbols_out[10:-10].size*2, 'Bit Errors =', err[0])
 
 print("Bit Error Ratio = ", err[0]/(RX.symbols_out[10:-10].size*2))
+
+plt.show()

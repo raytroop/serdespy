@@ -234,7 +234,7 @@ def prqs10(seed):
     shift = int((2**20-1)/3)
     b = np.hstack((a[shift:],a[:shift]))
     
-    c = np.vstack((a,b))
+    c = np.vstack((a,b))    # c[0,:] MSB, c[1,:] LSB
 
     pqrs = np.zeros(a.size,dtype = np.uint8)
     

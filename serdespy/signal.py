@@ -14,7 +14,7 @@ def grey_encode(x):
     Parameters
     ----------
     x : array
-        contains the two bits to be encoded
+        contains the two bits to be encoded [MSB, LSB]
     
     Returns
     -------

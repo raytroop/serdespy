@@ -15,7 +15,7 @@ import skrf as rf
 import scipy as sp
 
 #path to touchstone files here:
-s4p_dir = "./examples/mellitz_3ck_04_1119_CACR/"
+s4p_dir = "../mellitz_3ck_04_1119_CACR/"
 
 #far-end crosstalk
 fext_files = ['Tp0_Tp5_28p5db_FQSFP_fext' + f'{i}' +'.s4p' for i in range(1,8)]

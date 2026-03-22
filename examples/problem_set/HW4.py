@@ -57,9 +57,11 @@ FFE_taps = 7
 FFE_post = FFE_taps - FFE_pre - 1
 DFE_taps = 2
 
-sdp.channel_coefficients(h_pulse[:t.size],t,40,2,4, res=200)
+# channel pulse response: h_pulse
+sdp.channel_coefficients(h_pulse[:t.size],t,40,2,4, res=200, title = "Channel Coefficients")
 
-h = sdp.channel_coefficients(h_pulse_ctle[:t.size],t,40,2,4, res=200)
+# channel+CTLE pulse response: h_pulse_ctle
+h = sdp.channel_coefficients(h_pulse_ctle[:t.size],t,40,2,4, res=200, title = "Channel+CTLE Coefficients")
 #%%
 #h /= h.max()
 #print('h: ',h)
@@ -88,7 +90,11 @@ w_dfe_init = np.zeros([2,])
 
 w_ffe, w_dfe, v_combined_ffe, v_combined_dfe, z_combined, e_combined = \
 sdp.lms_equalizer(signal_rx_cropped, 0.001, len(signal_rx_cropped), w_ffe_init, FFE_pre, w_dfe_init,  voltage_levels, reference=reference_signal[:1000])
+# w_ffe, w_dfe, v_combined_ffe, v_combined_dfe, z_combined, e_combined, g = \
+# sdp.lms_equalizer(signal_rx_cropped, 0.001, len(signal_rx_cropped), w_ffe_init, FFE_pre, w_dfe_init,  voltage_levels, reference=None)
 
+# print(w_ffe)
+# print(w_dfe)
 #%%
 
 #voltage_levels = np.array([-3,-1,1,3])
@@ -96,11 +102,14 @@ sdp.lms_equalizer(signal_rx_cropped, 0.001, len(signal_rx_cropped), w_ffe_init, 
 nyquist_f = 25e9
 
 RX = sdp.Receiver(signal_ctle, samples_per_symbol, nyquist_f, voltage_levels,main_cursor=main_cursor)
+# plt.figure(dpi=200)
+# plt.plot(RX.signal)
 
 #sdp.simple_eye(RX.signal, samples_per_symbol*3, 800, TX.UI/TX.samples_per_symbol, "Eye Diagram with CTLE", res=200)
 
 RX.FFE(w_ffe, FFE_pre)
-
+# plt.figure(dpi=200)
+# plt.plot(RX.signal)
 sdp.simple_eye(RX.signal[int(100.5*samples_per_symbol):], samples_per_symbol*3, 800, 500*1e-15, "Eye Diagram with CTLE and FFE", res=200)
 
 RX.pam4_DFE(w_dfe)

@@ -70,7 +70,8 @@ for data_rate in [50e9,100e9]:
         # plt.show()
 
         signal_filtered = sp.signal.fftconvolve(signal_ideal, h[:ir_length], mode="full")
-
+        signal_filtered_raw = sp.signal.convolve(signal_ideal, h[:ir_length], mode="full")
+        assert np.allclose(signal_filtered, signal_filtered_raw)
         sdp.simple_eye(signal_filtered[samples_per_symbol*100:], samples_per_symbol*3, 100, UI/samples_per_symbol, "{}Gbps 2-PAM Signal with {}GHz Cutoff Filter".format(round(data_rate/1e9),round(freq_bw*1e-9)), res=200)
 
 #%% 4-PAM

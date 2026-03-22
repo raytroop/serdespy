@@ -15,7 +15,7 @@ import skrf as rf
 import scipy as sp
 
 #load in touchstone file containing s-params of 2m copper cable connector
-thru_file = "./examples/mellitz_3ck_04_1119_CACR/Tp0_Tp5_28p5db_FQSFP_thru.s4p"
+thru_file = "../mellitz_3ck_04_1119_CACR/Tp0_Tp5_28p5db_FQSFP_thru.s4p"
 thru_network = rf.Network(thru_file)
 
 #port definition, is defined in the header of the touchstone file

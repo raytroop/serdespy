@@ -535,6 +535,11 @@ def lms_equalizer(y, mu, N, w_ffe, FFE_pre, w_dfe, voltage_levels,
     v_ffe = np.zeros(N)
     z = np.zeros(N)
 
+    w_ffe_list = []
+    w_ffe_list.append(w_ffe)
+    w_dfe_list = []
+    w_dfe_list.append(w_dfe)
+
     min_delay = max(FFE_post, DFE_taps)
     for k in range(min_delay, N - FFE_pre):
         y_k = y[k - FFE_post:k + FFE_pre + 1][::-1]
@@ -567,6 +572,17 @@ def lms_equalizer(y, mu, N, w_ffe, FFE_pre, w_dfe, voltage_levels,
                 w_ffe -= mu * e[k] * y_k
             if w_dfe is not None:
                 w_dfe += mu * e[k] * z_k
+            w_ffe_list.append(w_ffe.tolist())
+            w_dfe_list.append(w_dfe.tolist())
+    plt.figure(dpi=200)
+    w_ffe_list = np.array(w_ffe_list)
+    w_dfe_list = np.array(w_dfe_list)
+    label_ffe = ['w_ffe['+ str(i)+']' for i in range(len(w_ffe))]
+    label_dfe = ['w_dfe[' + str(i) + ']' for i in range(len(w_dfe))]
+    plt.subplot(2, 1, 1); plt.title('FFE DFE Co-optimize')
+    plt.plot(w_ffe_list, label=label_ffe); plt.grid(True); plt.legend()
+    plt.subplot(2, 1, 2)
+    plt.plot(w_dfe_list, label=label_dfe); plt.grid(True); plt.legend()
 
     if is_cooptimizing and alpha is not None:
         w_dfe[:len(alpha)] = alpha

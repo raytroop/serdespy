@@ -29,6 +29,7 @@ lw = 0.05
 
 #TX signal with jitter
 signal_jitter = sdp.gaussian_jitter(signal_ideal, 20e-12, 10000, samples_per_symbol, stdev=1000e-15)
+# print(np.unique(signal_jitter))     # [-3. -1.  1.  3.]
 
 #eye diagram of TX with jitter
 sdp.simple_eye(signal_jitter, samples_per_symbol*3, 500, 500*1e-15, "{}Gbps 4-PAM Signal with jitter".format(data_rate/1e9),linewidth=lw, res=200)

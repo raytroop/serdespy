@@ -88,10 +88,10 @@ def rx_jitter_eye(signal, window_len, ntraces, n_symbols, tstep, title,  stdev, 
     plt.figure(dpi=res)
     for symbol_index,symbol_epsilon in enumerate(epsilon):
         epsilon_duration = int(round(symbol_epsilon/tstep))
-        t = np.linspace( -tstep * (((window_len-1))/2 + epsilon_duration ) ,tstep * (((window_len-1))/2 + epsilon_duration ), window_len)
+        # t = np.linspace( -tstep * (((window_len-1))/2 + epsilon_duration ) ,tstep * (((window_len-1))/2 + epsilon_duration ), window_len)
+        t = np.linspace(-tstep * (((window_len - 1)) / 2), tstep * (((window_len - 1)) / 2), window_len) + epsilon_duration*tstep
         plt.plot(t*1e12,np.reshape((traces[symbol_index][:]),window_len), color = 'blue', linewidth = linewidth)
-    
-        
+
     plt.title(title)
     plt.xlabel('[ps]')
     plt.ylabel('[V]')
